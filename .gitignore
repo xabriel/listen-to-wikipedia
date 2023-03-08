@@ -3,6 +3,9 @@
 .DS_Store
 *.log
 
+# IDE
+.idea
+
 # emacs
 *~
 ._*
