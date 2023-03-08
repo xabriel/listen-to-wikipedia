@@ -1,0 +1,21 @@
+{
+  "name": "listen-to-wikipedia",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "vue": "^3.2.45"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-vue": "^4.0.0",
+    "@wikimedia/codex": "^0.6.2",
+    "@wikimedia/codex-design-tokens": "^0.6.2",
+    "@wikimedia/codex-icons": "^0.6.2",
+    "vite": "^4.1.0"
+  }
+}
