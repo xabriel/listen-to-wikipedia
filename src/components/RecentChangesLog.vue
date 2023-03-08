@@ -7,33 +7,23 @@ const toFilter = new Set();
 const listenCounter = ref(0);
 const recentChanges = ref([]);
 
+const worker = new SharedWorker(new URL('../sharedworker.js', import.meta.url));
+worker.port.start();
+
 // Watch every checkbox for change
 wikis.value.forEach((wiki) => {
   watch(wiki, () => {
     wiki.checked ? toFilter.add(wiki.link) : toFilter.delete(wiki.link);
+    worker.port.postMessage(toFilter);
   });
 });
 
-const url = 'https://stream.wikimedia.org/v2/stream/recentchange';
-const eventSource = new EventSource(url);
-
-eventSource.onopen = () => {
-  console.info('Opened connection.');
-};
-eventSource.onerror = (event) => {
-  console.error('Encountered error', event);
-};
-eventSource.onmessage = (event) => {
-  // event.data will be a JSON message
-  const data = JSON.parse(event.data);
-  if (toFilter.has(data.server_name)) {
-    console.log(data);
-    listenCounter.value++;
+worker.port.onmessage = (e) => {
+  listenCounter.value++;
     if (recentChanges.value.length > 10) {
       recentChanges.value.shift();
     }
-    recentChanges.value.push(data);
-  }
+    recentChanges.value.push(e.data);
 };
 </script>
 

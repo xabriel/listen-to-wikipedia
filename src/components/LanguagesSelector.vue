@@ -18,7 +18,6 @@ const wikis = useWikis();
   width: 80%;
   margin: 0 auto;
   display: grid;
-  text-align: left;
   grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
 }
 </style>
