@@ -121,8 +121,8 @@
         'no': ['Norwegian', 'ws://wikimon.hatnote.com:9340'],
         'el': ['Greek', 'ws://wikimon.hatnote.com:9350'],
         'eo': ['Esperanto', 'ws://wikimon.hatnote.com:9360'],
-	'pt': ['Portuguese', 'ws://wikimon.hatnote.com:9370'],
-	'et': ['Estonian', 'ws://wikimon.hatnote.com:9380'],
+	    'pt': ['Portuguese', 'ws://wikimon.hatnote.com:9370'],
+	    'et': ['Estonian', 'ws://wikimon.hatnote.com:9380'],
         'wikidata': ['Wikidata' , 'ws://wikimon.hatnote.com:9220']
     }
 
@@ -133,8 +133,8 @@
         d = document,
         e = d.documentElement,
         g = d.getElementsByTagName('#area svg')[0],
-        width = w.innerWidth || e.clientWidth || g.clientWidth;
-        height = (w.innerHeight  - $('#header').height())|| (e.clientHeight - $('#header').height()) || (g.clientHeight - $('#header').height());
+        width = 1000;
+        height = 1000;
 
     var celesta = [],
         clav = [],
@@ -176,22 +176,10 @@
         $('body').append('<div id="loading"><p>Loading sound files ...</p></div>')
 
         var svg = d3.select("#area").append("svg")
-            .attr({width: width, height: height})
+            .attr("preserveAspectRatio", "xMinYMin meet")
+            .attr("viewBox", `0 0 ${width} ${height}`)
+            .classed("svg-content", true)
             .style('background-color', '#1c2733');
-
-        var update_window = function() {
-            width = w.innerWidth || e.clientWidth || g.clientWidth;
-            height = (w.innerHeight  - $('#header').height())|| (e.clientHeight - $('#header').height()) || (g.clientHeight - $('#header').height());
-
-            svg.attr("width", width).attr("height", height);
-            if (epm_text) {
-                epm_container.attr('transform', 'translate(0, ' + (height - 25) + ')')
-            }
-            update_tag_warning();
-            /*rate_bg.attr("width", width).attr("height", height);*/
-        }
-
-        window.onresize = update_window;
 
         $('#welcome').click(make_click_handler($('#welcome'), 'nowelcomes')
         );
