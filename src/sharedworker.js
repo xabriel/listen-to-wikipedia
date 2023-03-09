@@ -16,7 +16,7 @@ onconnect = (e) => {
   eventSource.onmessage = (event) => {
     // event.data will be a JSON message
     const data = JSON.parse(event.data);
-    if (toFilter.has(data.server_name)) {
+    if (toFilter.has(data.server_name) && data.namespace == 0 && data.type == 'edit') {
       port.postMessage(data);
     }
   };
