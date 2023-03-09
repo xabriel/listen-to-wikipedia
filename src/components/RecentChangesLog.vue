@@ -1,30 +1,26 @@
 <script setup>
-import { ref, watch } from 'vue';
-import { useWikis } from '../composition.js';
+import { ref, watch } from "vue";
+import { useWikis, useRecentChange } from "../composition.js";
 
 const wikis = useWikis();
-const toFilter = new Set();
+const { filter, recentChange } = useRecentChange();
 const listenCounter = ref(0);
 const recentChanges = ref([]);
-
-const worker = new SharedWorker(new URL('../sharedworker.js', import.meta.url));
-worker.port.start();
 
 // Watch every checkbox for change
 wikis.value.forEach((wiki) => {
   watch(wiki, () => {
-    wiki.checked ? toFilter.add(wiki.link) : toFilter.delete(wiki.link);
-    worker.port.postMessage(toFilter);
+    wiki.checked ? filter.add(wiki.link) : filter.delete(wiki.link);
   });
 });
 
-worker.port.onmessage = (e) => {
+watch(recentChange, () => {
   listenCounter.value++;
-    if (recentChanges.value.length > 10) {
-      recentChanges.value.shift();
-    }
-    recentChanges.value.push(e.data);
-};
+  if (recentChanges.value.length > 10) {
+    recentChanges.value.shift();
+  }
+  recentChanges.value.push(recentChange.value.data);
+});
 </script>
 
 <template>
@@ -36,8 +32,9 @@ worker.port.onmessage = (e) => {
         </li>
       </TransitionGroup>
     </div>
-    <div style="margin-bottom: 1rem; text-align: center;">
-      You have listened to a total of <span id="edit-counter"> {{ listenCounter }} edits</span>.
+    <div style="margin-bottom: 1rem; text-align: center">
+      You have listened to a total of
+      <span id="edit-counter"> {{ listenCounter }} edits</span>.
     </div>
   </div>
 </template>
