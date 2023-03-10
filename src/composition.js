@@ -10,13 +10,18 @@ const wikis = await fetch("https://wikistats.wmcloud.org/wikimedias_csv.php")
         .split("\n")
         .map((row) => row.split(","))
         .filter((row) => row[2] !== "special")
-        .map((row) => ({
-          lang: row[3],
-          title: domParser.parseFromString(`${row[4]} ${row[2]}`, "text/html")
-            .documentElement.textContent,
-          link: `${row[1]}.${row[2]}.org`,
-          checked: false,
-        }))
+        .map((row) => {
+          const loc_lang = domParser.parseFromString(row[4], "text/html")
+            .documentElement.textContent;
+          return {
+            lang: row[3],
+            type: row[2],
+            loc_lang,
+            title: `${loc_lang} ${row[2]}`,
+            link: `${row[1]}.${row[2]}.org`,
+            checked: false,
+          };
+        })
         .slice(1, -1)
     )
   );
