@@ -21,6 +21,7 @@ watch(recentChange, () => {
   }
   recentChanges.value.push(recentChange.value.data);
 });
+
 </script>
 
 <template>

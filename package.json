@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "d3": "^7.8.2",
+    "howler": "^2.2.3",
     "vue": "^3.2.45"
   },
   "devDependencies": {

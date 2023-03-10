@@ -2,7 +2,7 @@
 import { CdxProgressBar } from '@wikimedia/codex';
 import LanguagesSelector from './components/LanguagesSelector.vue';
 import RecentChangesLog from './components/RecentChangesLog.vue';
-import Visualizer from './components/Visualizer.vue';
+import AudioVisualizer from './components/AudioVisualizer.vue';
 </script>
 
 <template>
@@ -12,7 +12,7 @@ import Visualizer from './components/Visualizer.vue';
         <cdx-progress-bar />
       </template>
       <div>
-        <Visualizer></Visualizer>
+        <AudioVisualizer></AudioVisualizer>
         <RecentChangesLog></RecentChangesLog>
         <LanguagesSelector></LanguagesSelector>
       </div>
