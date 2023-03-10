@@ -2,17 +2,16 @@
 import { onMounted, watch } from "vue";
 import * as d3 from "d3";
 import { useRecentChange } from "../composition.js";
+import {loadSounds, calculateSize, playSound} from "../audio.js";
+
+loadSounds();
 
 const { recentChange } = useRecentChange();
 
 const width = 1000;
 const height = 1000;
 // TODO: Move these options out of this file
-const scale_factor = 5,
-  note_overlap = 15,
-  note_timeout = 300,
-  current_notes = 0,
-  max_life = 60000,
+const max_life = 60000,
   DEFAULT_LANG = "en";
 
 const body_background_color = "#f8f8f8",
@@ -41,18 +40,27 @@ onMounted(() => {
   watch(recentChange, () => {
     const data = recentChange.value.data;
     console.log(data);
-    let size = data.length ? data.length.new - data.length.old : 10;
+
+    // calculate the 'magnitude' of both the audio and visuals
+    const [origSize, scaledSize] = calculateSize(recentChange.value.data);
+
+    // play audio
+    if (origSize > 0) {
+      playSound(scaledSize, 'add')
+    } else {
+      playSound(scaledSize, 'sub')
+    }
+
+    // draw circle
     let label_text = data.title;
     let no_label = true;
     let type = data.type;
     let starting_opacity = silent ? 0.2 : 1;
 
     const circle_id = "d" + ((Math.random() * 100000) | 0);
-    const abs_size = Math.abs(size);
-    size = Math.max(Math.sqrt(abs_size) * scale_factor, 3);
 
-    const x = Math.random() * (width - size) + size;
-    const y = Math.random() * (height - size) + size;
+    const x = Math.random() * (width - scaledSize) + scaledSize;
+    const y = Math.random() * (height - scaledSize) + scaledSize;
 
     const circle_group = svg
       .append("g")
@@ -62,10 +70,10 @@ onMounted(() => {
 
     const ring = circle_group
       .append("circle")
-      .attr("r", size + 20)
+      .attr("r", scaledSize + 20)
       .attr("stroke", "none")
       .transition()
-      .attr("r", size + 40)
+      .attr("r", scaledSize + 40)
       .style("opacity", 0)
       .ease(Math.sqrt)
       .duration(2500)
@@ -80,7 +88,7 @@ onMounted(() => {
     const circle = circle_container
       .append("circle")
       .classed(type, true)
-      .attr("r", size)
+      .attr("r", scaledSize)
       .transition()
       .duration(max_life)
       .style("opacity", 0)
