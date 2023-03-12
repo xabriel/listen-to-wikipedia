@@ -1,18 +1,10 @@
 <script setup>
 import { ref, watch } from "vue";
-import { useWikis, useRecentChange } from "../composition.js";
+import { useRecentChange } from "../composition.js";
 
-const wikis = useWikis();
-const { filter, recentChange } = useRecentChange();
+const { recentChange } = useRecentChange();
 const listenCounter = ref(0);
 const recentChanges = ref([]);
-
-// Watch every checkbox for change
-wikis.value.forEach((wiki) => {
-  watch(wiki, () => {
-    wiki.checked ? filter.add(wiki.link) : filter.delete(wiki.link);
-  });
-});
 
 watch(recentChange, () => {
   listenCounter.value++;

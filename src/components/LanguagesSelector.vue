@@ -1,7 +1,7 @@
 <script setup>
 import { CdxCheckbox, CdxSearchInput, CdxTabs, CdxTab } from "@wikimedia/codex";
-import { computed, ref, unref } from "vue";
-import { useWikis } from "../composition.js";
+import { computed, watch, ref } from "vue";
+import { useWikis, useRecentChange } from "../composition.js";
 
 const currentTab = ref("all");
 const tabsData = [
@@ -52,6 +52,14 @@ const wikis = useWikis();
 const wikisBylang = ref(groupWikisByProperty(wikis.value, "loc_lang"));
 const wikisByType = ref(groupWikisByProperty(wikis.value, "type"));
 
+const { filter } = useRecentChange();
+// Watch every checkbox for change
+wikis.value.forEach((wiki) => {
+  watch(wiki, () => {
+    wiki.checked ? filter.add(wiki.link) : filter.delete(wiki.link);
+  });
+});
+
 const searchInput = ref("");
 
 const searchData = computed(() => {
@@ -77,20 +85,11 @@ const searchResults = computed(() => {
 
 <template>
   <div id="selector-container">
-    <cdx-search-input
-      v-model="searchInput"
-      aria-label="Search"
-      placeholder="English"
-    />
+    <cdx-search-input v-model="searchInput" aria-label="Search" placeholder="English" />
     <cdx-tabs v-model:active="currentTab" :framed="true">
-      <cdx-tab
-        v-for="(tab, index) in tabsData"
-        :key="index"
-        :name="tab.name"
-        :label="tab.label"
-      >
-        <div id="language-grid">
-          <cdx-checkbox v-for="wiki in searchResults" v-model="wiki.checked">
+      <cdx-tab v-for="(tab, index) in tabsData" :key="index" :name="tab.name" :label="tab.label">
+        <div v-if="currentTab == tab.name" id="language-grid">
+          <cdx-checkbox v-for="wiki in searchResults" v-model="wiki.checked" v-memo="[wiki.checked]">
             <span style="text-transform: capitalize" v-html="wiki.title"></span>
           </cdx-checkbox>
         </div>
