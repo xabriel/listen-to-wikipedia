@@ -89,7 +89,7 @@ const searchResults = computed(() => {
     <cdx-tabs v-model:active="currentTab" :framed="true">
       <cdx-tab v-for="(tab, index) in tabsData" :key="index" :name="tab.name" :label="tab.label">
         <div v-if="currentTab == tab.name" id="language-grid">
-          <cdx-checkbox v-for="wiki in searchResults" v-model="wiki.checked" v-memo="[wiki.checked]">
+          <cdx-checkbox v-for="wiki in searchResults" v-model="wiki.checked" :key="wiki.title" v-memo="[wiki.checked]">
             <span style="text-transform: capitalize" v-html="wiki.title"></span>
           </cdx-checkbox>
         </div>
