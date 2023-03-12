@@ -2,7 +2,7 @@
 import { onMounted, watch } from "vue";
 import * as d3 from "d3";
 import { useRecentChange } from "../composition.js";
-import {loadSounds, calculateSize, playSound} from "../audio.js";
+import { loadSounds, calculateSize, playSound } from "../audio.js";
 
 loadSounds();
 
@@ -87,6 +87,7 @@ onMounted(() => {
 
     const circle = circle_container
       .append("circle")
+      .classed("visualizer-circle", true)
       .classed(type, true)
       .attr("r", scaledSize)
       .transition()
@@ -97,28 +98,35 @@ onMounted(() => {
       })
       .remove();
 
-    circle_container.on("mouseover", function () {
-      if (no_label) {
-        no_label = false;
-        circle_container
-          .append("text")
-          .text(label_text)
-          .classed("article-label", true)
-          .attr("text-anchor", "middle")
-          .transition()
-          .delay(1000)
-          .style("opacity", 0)
-          .duration(2000)
-          .on("end", function () {
-            no_label = true;
-          })
-          .remove();
-      }
-    });
+    circle_container
+      .append("text")
+      .text(label_text)
+      .classed("article-label", true)
+      .attr("text-anchor", "middle");
   });
 });
 </script>
 <template>
   <div id="area"></div>
 </template>
-<style scoped></style>
+<style>
+.article-label {
+  opacity: 0;
+  transition: opacity 1s;
+  will-change: opacity;
+}
+
+.article-label:hover,
+.visualizer-circle:hover+.article-label {
+  opacity: 1;
+}
+
+.edit {
+  transition: fill 1s;
+  fill: var(--background-color-progressive);
+}
+
+.edit:hover {
+  fill: var(--background-color-progressive--hover);
+}
+</style>
